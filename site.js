@@ -1,24 +1,23 @@
 let debug = 1;
 
-showCurrencyList();
+prepPage();
 
-function showCurrencyList () {
-	let fiatList = document.createElement('dl');
+function prepPage () {
+	let fiatSelector = document.createElement('select');
+	fiatSelector.setAttribute('id', 'fiat-currencies');
 
 	let currencyLists = loadCurrencyLists();
 	let fiatCurrencies = currencyLists.fiatCurrencies;
 
 	Object.keys(fiatCurrencies).forEach((currency) => {
-		let currencyCode = document.createElement('dt');
-		currencyCode.textContent = currency;
-		fiatList.appendChild(currencyCode);
+		let currencyItem = document.createElement('option');
+		currencyItem.setAttribute('value', currency);
+		currencyItem.textContent = `${fiatCurrencies[currency]} (${currency})`;
 
-		let currencyName = document.createElement('dd');
-		currencyName.textContent = fiatCurrencies[currency];
-		fiatList.appendChild(currencyName);
+		fiatSelector.appendChild(currencyItem);
 	})
 
-	document.getElementById('currency-list-container').appendChild(fiatList);
+	document.getElementById('currency-list-container').appendChild(fiatSelector);
 }
 
 function loadCurrencyLists () {

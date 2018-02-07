@@ -3,27 +3,15 @@ let debug = 1;
 prepPage();
 
 function prepPage () {
+	createFiatCurrencySelector();
+	createCryptoCurrencySelector();
+}
+
+function createFiatCurrencySelector () {
 	let fiatSelector = document.createElement('select');
 	fiatSelector.setAttribute('id', 'fiat-currencies');
 
-	let currencyLists = loadCurrencyLists();
-	let fiatCurrencies = currencyLists.fiatCurrencies;
-
-	Object.keys(fiatCurrencies).forEach((currency) => {
-		let currencyItem = document.createElement('option');
-		currencyItem.setAttribute('value', currency);
-		currencyItem.textContent = `${fiatCurrencies[currency]} (${currency})`;
-
-		fiatSelector.appendChild(currencyItem);
-	})
-
-	document.getElementById('currency-list-container').appendChild(fiatSelector);
-}
-
-function loadCurrencyLists () {
-	let currencyLists = {};
-
-	currencyLists.fiatCurrencies = {
+	let fiatCurrencies = {
 		'AED' : 'United Arab Emirates dirham',
 		'ARS' : 'Argentine peso',
 		'AUD' : 'Australian dollar',
@@ -82,5 +70,63 @@ function loadCurrencyLists () {
 		'ZMW' : 'Zambian kwacha'
 	};
 
-	return currencyLists;
+	Object.keys(fiatCurrencies).forEach( currency  => {
+		let currencyItem = document.createElement('option');
+		currencyItem.setAttribute('value', currency);
+		currencyItem.textContent = `${fiatCurrencies[currency]} (${currency})`;
+
+		fiatSelector.appendChild(currencyItem);
+	})
+
+	document.getElementById('fiat-currency-list-container').appendChild(fiatSelector);
+}
+
+function createCryptoCurrencySelector () {
+	fetch('https://min-api.cryptocompare.com/data/all/coinlist')
+		.then( (response) => {
+			if (!response.ok) {
+				throw new Error('Request response was not OK');
+			}
+			return getJSON(response);
+		}).then( (data) => {
+			// console.log(data.Data);
+			extractTopTenCryptoCurrencies(data.Data);
+			//return data.Data;
+		}).catch( (error) => {
+			// Needs improvement (messages for different errors)
+			console.log('Error fetching! ', error.message)
+		});
+}
+
+function extractTopTenCryptoCurrencies(allCryptoCurrencies) {
+	let topTen = [];
+	let collected = 0;
+	let keyCollection = Object.keys(allCryptoCurrencies);
+	let bitcoinIndex = keyCollection.indexOf('BTC');
+
+	for (let i = bitcoinIndex; i < bitcoinIndex + 10; i++) {
+		topTen.push(allCryptoCurrencies[keyCollection[i]]);
+	};
+
+	let cryptoSelector = document.createElement('select');
+	cryptoSelector.setAttribute('id', 'crypto-currencies');
+
+	topTen.forEach( (currency, index)  => {
+		let currencyItem = document.createElement('option');
+		currencyItem.setAttribute('value', topTen[index].Symbol);
+		currencyItem.textContent = topTen[index].CoinName;
+
+		cryptoSelector.appendChild(currencyItem);
+	});
+
+	document.getElementById('crypto-currency-list-container').appendChild(cryptoSelector);
+}
+
+function getJSON (response) {
+	let contentType = response.headers.get("content-type");
+	if( contentType && contentType.includes("application/json")) {
+		return response.json();
+	} else {
+		throw new TypeError('Response was not JSON');
+	}
 }

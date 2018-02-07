@@ -128,3 +128,21 @@ function getJSON (response) {
 		throw new TypeError('Response was not JSON');
 	}
 }
+
+function processSearchPair (){
+	let formLocator = document.getElementById("currency-form");
+	formLocator.addEventListener("submit", getExchangeRate);
+}
+
+processSearchPair();
+
+function getExchangeRate (event){
+	event.preventDefault();
+
+	let fiatCurrencyChosen = document.getElementById("fiat-currencies");
+	let cryptoCurrencyChosen = document.getElementById("crypto-currencies");
+	console.log(fiatCurrencyChosen[fiatCurrencyChosen.selectedIndex].value);
+	console.log(cryptoCurrencyChosen[cryptoCurrencyChosen.selectedIndex].value);
+
+
+}

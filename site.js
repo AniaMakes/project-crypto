@@ -83,16 +83,14 @@ function createFiatCurrencySelector () {
 
 function createCryptoCurrencySelector () {
 	fetch('https://min-api.cryptocompare.com/data/all/coinlist')
-		.then( (response) => {
+		.then( response => {
 			if (!response.ok) {
 				throw new Error('Request response was not OK');
 			}
 			return getJSON(response);
-		}).then( (data) => {
-			// console.log(data.Data);
+		}).then( data => {
 			extractTopTenCryptoCurrencies(data.Data);
-			//return data.Data;
-		}).catch( (error) => {
+		}).catch( error => {
 			// Needs improvement (messages for different errors)
 			console.log('Error fetching! ', error.message)
 		});

@@ -141,8 +141,21 @@ function getExchangeRate (event){
 
 	let fiatCurrencyChosen = document.getElementById("fiat-currencies");
 	let cryptoCurrencyChosen = document.getElementById("crypto-currencies");
-	console.log(fiatCurrencyChosen[fiatCurrencyChosen.selectedIndex].value);
-	console.log(cryptoCurrencyChosen[cryptoCurrencyChosen.selectedIndex].value);
+	let fiatCurrencyCode = (fiatCurrencyChosen[fiatCurrencyChosen.selectedIndex].value);
+	let cryptoCurrencyCode = (cryptoCurrencyChosen[cryptoCurrencyChosen.selectedIndex].value);
 
+	fetch(`https://min-api.cryptocompare.com/data/price?fsym=${cryptoCurrencyCode}&tsyms=${fiatCurrencyCode}`)
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Request response was not OK');
+			}
+			return getJSON(response);
+		})
+		.then( data => {
+			console.log(data);
+		})
+		.catch( error => {
+			console.log('Error fetching! ', error.message);
+		})
 
 }
